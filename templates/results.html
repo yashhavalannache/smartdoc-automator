@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>📄 SmartDoc Results</title>
+    <style>
+        body {
+            background-color: #fff0f5;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 30px;
+            color: #4a148c;
+            font-size: 18px;
+        }
+        .file-box {
+            margin-bottom: 40px;
+            background: #fefefe;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #d8bfd8;
+            box-shadow: 0 0 10px rgba(255, 192, 203, 0.2);
+        }
+        h2 {
+            color: #800080;
+        }
+        pre {
+            background: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error-box {
+            background: #ffe6e6;
+            padding: 10px;
+            border-left: 5px solid #ff4d4d;
+            margin-bottom: 20px;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #ff1493;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>📄 Uploaded File Contents</h1>
+    {% if errors %}
+    <div class="error-box">
+        <strong>Errors:</strong>
+        <ul>
+            {% for err in errors %}
+                <li>{{ err }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% for file in file_contents %}
+<div class="file-box">
+    <h2>🚀 {{ file.filename }}</h2>
+    <p><strong>Uploaded at:</strong> {{ file.timestamp }}</p>
+    <pre>{{ file.content }}</pre>
+</div>
+{% endfor %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+    <a href="/">⬅️ Upload More Files</a>
+</body>
+</html>
