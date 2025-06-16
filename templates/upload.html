@@ -142,7 +142,7 @@ select#lang:hover {
 </head>
 <body>
   <h1>📄 SmartDoc Automator</h1>
-  <div class="tagline">Transform your documents into insights — effortlessly 💡</div>
+  <div class="tagline">Transform your documents into insights — effortlessly ✨</div>
 
   <form method="POST" enctype="multipart/form-data">
     <label>Select multiple files:</label>
@@ -201,8 +201,9 @@ select#lang:hover {
     function updateFileList() {
       fileList.innerHTML = '';
       fileCounter.textContent = selectedFiles.length > 0 
-        ? `📦 ${selectedFiles.length} file${selectedFiles.length > 1 ? 's' : ''} selected` 
-        : 'No files selected yet';
+  ? `✅${selectedFiles.length} file${selectedFiles.length > 1 ? 's' : ''} selected` 
+  : 'No files selected yet';
+
 
       selectedFiles.forEach((file, index) => {
         const li = document.createElement('li');
@@ -230,6 +231,4 @@ select#lang:hover {
   </script>
 </body>
 </html>
-
-
 

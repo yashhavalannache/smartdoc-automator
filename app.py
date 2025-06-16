@@ -51,6 +51,17 @@ def video_to_text(video_path):
     except Exception as e:
         return f"\u274c Video processing failed: {str(e)}"
 
+def clean_text_for_xml(text):
+    # Remove characters not allowed in XML
+    valid_chars = []
+    for char in text:
+        if ord(char) in (0x09, 0x0A, 0x0D) or (0x20 <= ord(char) <= 0xD7FF) or (0xE000 <= ord(char) <= 0xFFFD):
+            valid_chars.append(char)
+        else:
+            valid_chars.append(' ')  # Replace with space or you can use ''
+    return ''.join(valid_chars)
+
+
 def transcribe_audio(audio_path):
     recognizer = sr.Recognizer()
     audio = AudioSegment.from_file(audio_path)
@@ -74,7 +85,10 @@ def extract_text(file_path, ext):
         elif ext == 'pdf':
             with open(file_path, 'rb') as file:
                 reader = PyPDF2.PdfReader(file)
-                raw_text = '\n'.join([page.extract_text() or '' for page in reader.pages])
+                raw_text = ''
+                for page in reader.pages:
+                    page_text = page.extract_text() or ''
+                    raw_text += clean_text_for_xml(page_text) + '\n'
         elif ext in {'png', 'jpg', 'jpeg'}:
             image = Image.open(file_path)
             raw_text = pytesseract.image_to_string(image)
@@ -87,6 +101,7 @@ def extract_text(file_path, ext):
     except Exception as e:
         return f"\u274c Extraction failed: {str(e)}"
     return detect_and_translate(raw_text)
+
 
 def save_to_docx_file(filename, text):
     base = os.path.splitext(filename)[0]
