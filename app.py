@@ -175,8 +175,6 @@ def home():
 
     return render_template('upload.html')
 
-
-
 @app.route('/results')
 def results():
     file_contents = session.get('file_contents')
@@ -205,5 +203,5 @@ def upload():
     return render_template('results.html', content=content)
 if __name__ == '__main__':
     import os
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', port=port, debug=False)
