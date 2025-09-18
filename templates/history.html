@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis History</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+    /* History Page Styling - Matching Upload Page Theme */
+    body {
+        background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+        font-family: 'Segoe UI', sans-serif;
+        color: #4a148c;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        position: relative;
+    }
+
+    body::before {
+        content: "";
+        background-image: url("{{ url_for('static', filename='smartdoc.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        opacity: 0.5;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    h1 {
+        margin-top: 40px;
+        font-size: 2.5rem;
+        color: #6a1b9a;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .history-table {
+        width: 80%;
+        margin: 40px auto;
+        border-collapse: collapse;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid #e1bee7;
+        font-size: 16px;
+    }
+
+    .history-table th {
+        background: linear-gradient(to right, #ba68c8, #8e24aa);
+        color: #fff;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .history-table tr:hover {
+        background-color: rgba(186, 104, 200, 0.15);
+        transition: 0.3s;
+    }
+
+    .btn, .btn-history {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(to right, #ba68c8, #8e24aa);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .btn:hover, .btn-history:hover {
+        background: linear-gradient(to right, #9c4dcc, #6a1b9a);
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+</head>
+<body>
+    <h1>📄SmartDoc Analysis History</h1>
+    <table class="history-table">
+        <tr>
+            <th>File Name</th>
+            <th>Type</th>
+            <th>Analyzed On</th>
+        </tr>
+        {% for file in history %}
+        <tr>
+            <td>{{ file[0] }}</td>
+            <td>{{ file[1] }}</td>
+            <td>{{ file[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="/" class="btn">⬅ Back to Upload</a>
+</body>
+</html>

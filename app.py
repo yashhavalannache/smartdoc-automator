@@ -12,8 +12,42 @@ from langdetect import detect
 from deep_translator import GoogleTranslator
 from datetime import datetime
 
+import sqlite3
+from flask import Flask, render_template, request
+from datetime import datetime
+
+# Ensure history table exists
+def init_db():
+    conn = sqlite3.connect('smartdoc_data.db')
+    cur = conn.cursor()
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_name TEXT NOT NULL,
+        file_type TEXT NOT NULL,
+        analysis_date TEXT NOT NULL
+    )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Call it once when the app starts
+init_db()
+def save_history(file_name, file_type):
+    conn = sqlite3.connect('smartdoc_data.db')
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO history (file_name, file_type, analysis_date) VALUES (?, ?, ?)",
+        (file_name, file_type, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    )
+    conn.commit()
+    conn.close()
+    print(f"Inserted into history: {file_name} ({file_type})")
+app = Flask(__name__)
+
 app = Flask(__name__)
 app.secret_key = 'sigma_secret_key'
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024  # 2 GB
 
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'output'
@@ -115,6 +149,26 @@ def clear_upload_folder():
     for f in os.listdir(UPLOAD_FOLDER):
         os.remove(os.path.join(UPLOAD_FOLDER, f))
 
+@app.route('/')
+def index():
+    # Fetch last 5 uploads from history
+    conn = sqlite3.connect('smartdoc_data.db')
+    cur = conn.cursor()
+    cur.execute("SELECT file_name, file_type, analysis_date FROM history ORDER BY analysis_date DESC LIMIT 5")
+    recent_files = cur.fetchall()
+    conn.close()
+
+    return render_template('upload.html', recent_files=recent_files)
+
+@app.route('/history')
+def history():
+    conn = sqlite3.connect('smartdoc_data.db')
+    cur = conn.cursor()
+    cur.execute("SELECT file_name, file_type, analysis_date FROM history ORDER BY analysis_date DESC")
+    history_data = cur.fetchall()
+    conn.close()
+    return render_template('history.html', history=history_data)
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     global file_contents
@@ -196,11 +250,47 @@ app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/upload', methods=['POST'])
 def upload():
-    file = request.files['file']
-    content = file.read().decode('utf-8')  # Simplified
-    return render_template('results.html', content=content)
+    files = request.files.getlist('files')
+    if not files or files[0].filename == '':
+        return "No file uploaded", 400
+
+    file_contents = []
+
+    for file in files:
+        filename = secure_filename(file.filename)
+        file_ext = os.path.splitext(filename)[1].replace('.', '')
+
+        # Save file
+        file_path = os.path.join('uploads', filename)
+        file.save(file_path)
+
+        # Read content (text files only)
+        try:
+            file.seek(0)  # Reset pointer
+            content = file.read().decode('utf-8')
+        except:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+
+        # Add to list
+        file_contents.append({
+            "filename": filename,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "content": content
+        })
+
+        # Save history
+        save_history(filename, file_ext)
+
+    return render_template('results.html', file_contents=file_contents)
+
+@app.errorhandler(413)
+def too_large(e):
+    return "File too large. Maximum allowed size is 100MB.", 413
+
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 5001))
