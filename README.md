@@ -24,5 +24,23 @@ SmartDoc Automator is a Flask-based web application that simplifies document aut
 - **Backend:** Flask (Python)  
 - **Libraries/Tools:** OpenAI, PyMuPDF, SpeechRecognition, MoviePy, OpenCV, Pandas  
 
----
+## 📂 Project Structure
+```text
+SMARTDOC/
+│── output/ 
+│── static/ 
+│── templates/ 
+│── uploads/ 
+│── app.py 
+│── init_db.py 
+│── smartdoc_data.db 
+│── requirements.txt 
+│── Procfile 
+│── README.md 
+│── temp_audio.wav # Temporary audio storage
+│── desktop.ini 
+│── pycache/ # Python cache
+```
+
+
 
