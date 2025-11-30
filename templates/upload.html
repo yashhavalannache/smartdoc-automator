@@ -6,140 +6,193 @@
   <link rel="shortcut icon" href="/static/doc.png" alt="">
 
   <style>
-    body {
-      background: #000;
-      font-family: 'Bookman Old Style';
-      color: #000000;
-      padding: 0;
-      font-size: 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-      position: relative;
-    }
+    /* ---- Body & Layout ---- */
+body {
+    background: #000;
+    font-family: 'Bookman Old Style', serif;
+    color: #fff;
+    padding: 10px;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    position: relative;
+}
 
-    .bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -2;
-      opacity: 0.9;
-      filter: brightness(1) contrast(1.05) saturate(1.2);
-    }
+/* ---- Background Video ---- */
+.bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    opacity: 0.9;
+    filter: brightness(1) contrast(1.05) saturate(1.2);
+}
 
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.25);
-      z-index: -1;
-    }
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.25);
+    z-index: -1;
+}
 
-    h1 { color: #01031c; font-size: 36px; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(255,255,255,0.4); }
+/* ---- Header Box ---- */
+.header-box {
+    background: rgba(198,182,213,0.95);
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 14px;
+    box-shadow: 5px 4px 60px rgb(125,38,226);
+    backdrop-filter: blur(6px);
+    text-align: center;
+    margin-bottom: 20px;
+    animation: fadeIn 1.2s ease-in-out, floatPop 3.5s ease-in-out infinite;
+    width: 90%;
+    max-width: 550px;
+}
 
-    .tagline { font-size: 20px; font-style: italic; color: #000000; margin-bottom: 20px; }
+/* ---- Headings ---- */
+h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.4);
+}
 
-    form {
-      background-color: #f3ecf3cc;
-      backdrop-filter: blur(10px);
-      padding: 20px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 700px;
-      animation: fadeIn 1.2s ease-in-out;
-    }
+.tagline {
+    font-size: 18px;
+    font-style: italic;
+    margin-bottom: 15px;
+}
 
-    label { font-weight: bold; margin-bottom: 10px; font-size: 18px; text-align: center; }
-    input[type="file"] { margin-bottom: 10px; width: 100%; }
+/* ---- Form ---- */
+form {
+    background-color: #f3ecf3cc;
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 700px;
+    animation: fadeIn 1.2s ease-in-out;
+}
 
-    .file-counter {
-      margin-top: 5px;
-      margin-bottom: 15px;
-      font-size: 16px;
-      background-color: #7e30aedf;
-      padding: 8px 16px;
-      border-radius: 20px;
-      color: #0c0c0c;
-      font-weight: 600;
-      animation: pulse 1.3s infinite ease-in-out;
-    }
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 16px;
+    text-align: center;
+}
 
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.05); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.9; }
-    }
+input[type="file"] {
+    margin-bottom: 10px;
+    width: 100%;
+}
 
-    ul { margin-top: 10px; list-style-type: none; padding-left: 0; width: 100%; max-height: 120px; overflow-y: auto; }
-    li { background-color: #e5e7f5; padding: 10px 15px; margin-bottom: 8px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; font-size: 16px; }
-    .delete-btn { background: transparent; color: #301b9a; border: none; font-size: 18px; font-weight: bold; cursor: pointer; padding: 4px 8px; border-radius: 50%; transition: background 0.3s ease; }
-    .delete-btn:hover { background: #c3bee9; }
+.file-counter {
+    margin: 5px 0 15px;
+    font-size: 15px;
+    background-color: #7e30aedf;
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: #0c0c0c;
+    font-weight: 600;
+    animation: pulse 1.3s infinite ease-in-out;
+}
 
-    button[type="submit"] {
-      margin-top: 15px;
-      background: linear-gradient(to right, #0404f4, #c800ff);
-      color: rgb(255, 255, 255);
-      border: none;
-      padding: 12px 25px;
-      font-weight: bold;
-      border-radius: 30px;
-      cursor: pointer;
-      font-size: 18px;
-      width: 100%;
-      box-shadow: 4px 3px 22px rgb(5, 123, 248);
-      transition: transform 0.3s ease, background 0.3s ease;
-    }
+/* ---- File List ---- */
+ul {
+    margin-top: 10px;
+    list-style-type: none;
+    padding-left: 0;
+    width: 100%;
+    max-height: 150px;
+    overflow-y: auto;
+}
 
-    select#lang {
-      background-color: #e8e5f5;
-      color: #050505;
-      border: 2px solid #6d68c8;
-      transition: 0.3s ease-in-out;
-      box-shadow: 3px black;
-    }
+li {
+    background-color: #e5e7f5;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
 
-    select#lang:hover { background-color: #ede7f6; transform: scale(1.01); }
-    button[type="submit"]:hover { background: linear-gradient(to right, #1607f4, #231b9a); transform: scale(1.05); }
+.delete-btn {
+    background: transparent;
+    color: #301b9a;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
 
-    .header-box {
-      background: rgba(198, 182, 213, 0.957);
-      display: inline-block;
-      padding: 12px 25px;
-      border-radius: 14px;
-      box-shadow: 5px 4px 60px rgb(125, 38, 226);
-      backdrop-filter: blur(6px);
-      text-align: center;
-      margin-bottom: 25px;
-      animation: fadeIn 1.2s ease-in-out, floatPop 3.5s ease-in-out infinite;
-      width:550px;
-    }
+.delete-btn:hover {
+    background: #c3bee9;
+}
 
-    @keyframes floatPop {
-      0% { transform: scale(1); opacity: 1; }
-      25% { transform: scale(1.02); opacity: 0.95; }
-      50% { transform: scale(1); opacity: 1; }
-      75% { transform: scale(1.02); opacity: 0.95; }
-      100% { transform: scale(1); opacity: 1; }
-    }
+/* ---- Buttons ---- */
+button[type="submit"] {
+    margin-top: 15px;
+    background: linear-gradient(to right, #0404f4, #c800ff);
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    box-shadow: 4px 3px 22px rgb(5,123,248);
+    transition: transform 0.3s ease, background 0.3s ease;
+}
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+button[type="submit"]:hover {
+    background: linear-gradient(to right, #1607f4, #231b9a);
+    transform: scale(1.03);
+}
 
-    .footer{ text-align: center; padding: 15px; color: #faf8fa; font-size: 14px; position: fixed; bottom: 0; width: 100%; }
+/* ---- Animations ---- */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+}
 
-    .error-list li { background:#ffdddd; padding:10px; border-radius:8px; color:#b00000; font-weight:bold; margin-bottom:8px; }
-  </style>
+@keyframes floatPop {
+    0%,50%,100% { transform: scale(1); opacity: 1; }
+    25%,75% { transform: scale(1.02); opacity: 0.95; }
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ---- Responsive Media Queries ---- */
+@media (max-width: 768px) {
+    h1 { font-size: 26px; }
+    .tagline { font-size: 14px; }
+    form { padding: 12px; }
+    .file-counter { font-size: 13px; padding: 5px 10px; }
+    li { font-size: 13px; padding: 8px 12px; }
+    button[type="submit"] { font-size: 14px; padding: 10px 15px; }
+}
+ </style>
 </head>
 
 <body>
