@@ -1,0 +1,214 @@
+correct app.py code 
+
+from flask import Flask, render_template, request
+import os
+from werkzeug.utils import secure_filename
+from docx import Document
+import pytesseract
+from PIL import Image
+import PyPDF2
+
+# Path to Tesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+app = Flask(__name__)
+
+UPLOAD_FOLDER = 'uploads'
+OUTPUT_FOLDER = 'output'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def extract_text_from_txt(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def extract_text_from_docx(file_path):
+    doc = Document(file_path)
+    return '\n'.join([para.text for para in doc.paragraphs])
+
+def extract_text_from_pdf(file_path):
+    text = ""
+    with open(file_path, 'rb') as file:
+        reader = PyPDF2.PdfReader(file)
+        for page in reader.pages:
+            text += page.extract_text() or ''
+    return text
+
+def extract_text_from_image(file_path):
+    image = Image.open(file_path)
+    return pytesseract.image_to_string(image)
+
+def save_extracted_text(filename, text):
+    base_filename = os.path.splitext(filename)[0]
+    output_path = os.path.join(OUTPUT_FOLDER, f"{base_filename}.txt")
+    with open(output_path, 'w', encoding='utf-8') as out_file:
+        out_file.write(text)
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_files():
+    messages = []
+    errors = []
+
+    if request.method == 'POST':
+        uploaded_files = request.files.getlist('files')
+        if not uploaded_files or uploaded_files[0].filename == '':
+            errors.append("⚠️ No files selected.")
+            return render_template('upload.html', messages=messages, errors=errors)
+
+        for file in uploaded_files:
+            filename = secure_filename(file.filename)
+            if file and allowed_file(filename):
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                ext = filename.rsplit('.', 1)[1].lower()
+
+                try:
+                    if ext == 'txt':
+                        text = extract_text_from_txt(file_path)
+                    elif ext == 'docx':
+                        text = extract_text_from_docx(file_path)
+                    elif ext == 'pdf':
+                        text = extract_text_from_pdf(file_path)
+                    elif ext in {'png', 'jpg', 'jpeg'}:
+                        text = extract_text_from_image(file_path)
+                    else:
+                        errors.append(f"❌ Unsupported file type: {filename}")
+                        continue
+
+                    save_extracted_text(filename, text)
+                    messages.append(f"✅ {filename} uploaded and text saved successfully!")
+                except Exception as e:
+                    errors.append(f"❌ Error processing {filename}: {str(e)}")
+            else:
+                errors.append(f"❌ File type not allowed: {filename}")
+
+    return render_template('upload.html', messages=messages, errors=errors)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+
+
+# ==========================
+# 🧠 SMARTDOC | Built Different
+# By: Yashhh (Sigma Mode ON)
+# ==========================
+
+from flask import Flask, render_template, request
+import os
+from werkzeug.utils import secure_filename
+from docx import Document
+import pytesseract
+from PIL import Image
+import PyPDF2
+import sqlite3
+from datetime import datetime
+
+# === CONFIG AREA ===
+app = Flask(__name__)
+UPLOAD_FOLDER = 'uploads'
+OUTPUT_FOLDER = 'output'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+# Set Tesseract path (Windows default)
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+
+# === DB INIT (Run once) ===
+def init_db():
+    with sqlite3.connect('smartdoc_data.db') as conn:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS extracted_docs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT,
+                content TEXT,
+                uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        conn.commit()
+init_db()
+
+
+# === UTILITY ZONE ===
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def extract_text(file_path, ext):
+    if ext == 'txt':
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    elif ext == 'docx':
+        doc = Document(file_path)
+        return '\n'.join([para.text for para in doc.paragraphs])
+    elif ext == 'pdf':
+        with open(file_path, 'rb') as file:
+            reader = PyPDF2.PdfReader(file)
+            return '\n'.join([page.extract_text() or '' for page in reader.pages])
+    elif ext in {'png', 'jpg', 'jpeg'}:
+        image = Image.open(file_path)
+        return pytesseract.image_to_string(image)
+    else:
+        raise ValueError("Unsupported file extension.")
+
+def save_to_text_file(filename, text):
+    base = os.path.splitext(filename)[0]
+    path = os.path.join(OUTPUT_FOLDER, f"{base}.txt")
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(text)
+
+def save_to_database(filename, text):
+    with sqlite3.connect('smartdoc_data.db') as conn:
+        conn.execute('INSERT INTO extracted_docs (filename, content) VALUES (?, ?)', (filename, text))
+        conn.commit()
+
+
+# === ROUTES ===
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    messages, errors = [], []
+
+    if request.method == 'POST':
+        uploaded_files = request.files.getlist('files')
+        if not uploaded_files or uploaded_files[0].filename == '':
+            errors.append("⚠️ No files selected. SmartDoc moves require inputs.")
+        else:
+            for file in uploaded_files:
+                filename = secure_filename(file.filename)
+                ext = filename.rsplit('.', 1)[1].lower()
+
+                if file and allowed_file(filename):
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+
+                    try:
+                        text = extract_text(file_path, ext)
+                        save_to_text_file(filename, text)
+                        save_to_database(filename, text)
+                        messages.append(f"✅ {filename} processed and stored")
+                    except Exception as e:
+                        errors.append(f"❌ {filename} failed: {str(e)}")
+                else:
+                    errors.append(f"❌ {filename} not allowed. SmartDoc only supports clean formats.")
+
+    return render_template('upload.html', messages=messages, errors=errors)
+
+
+# === START THE ENGINE ===
+if __name__ == '__main__':
+    print("🔥 SmartDoc running... Ready to convert chaos into clarity.")
+    app.run(debug=True)
+

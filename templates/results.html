@@ -3,122 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <title>SmartDoc Results</title>
-    <link rel="shortcut icon" href="/static/email1.png" alt="">
+    <link rel="shortcut icon" href="/static/doc.png" alt="">
     <style>
        body {
-      background: linear-gradient(135deg, #fce4ec, #f3e5f5);
-      font-family: 'Segoe UI', sans-serif;
-      color: #4a148c;
-      padding: 0;
-      font-size: 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      
-      margin: 0;
-      position: relative;
-    }
-.btn-history {
-    display: inline-block;
-    margin-left: 10px;
-    padding: 10px 20px;
-    background: linear-gradient(to right, #8e24aa, #6a1b9a);
-    color: #fff;
-    border: none;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
+          background: linear-gradient(135deg, #ece4fc, #f3e5f5);
+          font-family: 'Times New Roman', serif;
+          color: #2e148c;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-height: 100vh;
+          position: relative;
+          overflow-x: hidden;
+       }
 
-.btn-history:hover {
-    background: linear-gradient(to right, #ab47bc, #8e24aa);
-    transform: scale(1.05);
-}
+       body::before {
+          content: "";
+          background-image: url("{{ url_for('static', filename='smartdoc.jpg') }}");
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          opacity: 0.45;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: -1;
+          filter: blur(2px);
+       }
 
-    body::before {
-      content: "";
-      background-image: url("{{ url_for('static', filename='smartdoc.jpg') }}");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      opacity: 0.5;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
-      .file-box {
-          margin-bottom: 40px;
-          background: rgba(255, 255, 255, 0.85);
-          padding: 25px;
-          border-radius: 16px;
-          border: 2px solid #d8bfd8;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-          width: 90%;
-          max-width: 900px;
-      }
-
-      h1 {
-          font-size: 36px;
-          margin-bottom: 20px;
-          color: #6a1b9a;
+       h1 {
+          font-size: 38px;
+          margin: 40px 0 20px 0;
+          color: #120b4a;
+          text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
           text-align: center;
-      }
+          animation: fadeIn 1s ease-in-out;
+       }
 
-      h2 {
-          color: #800080;
+       .file-box {
+          margin-bottom: 35px;
+          background: rgba(255, 255, 255, 0.92);
+          padding: 25px;
+          border-radius: 18px;
+          border: 2px solid #c8b3de;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+          width: 90%;
+          max-width: 950px;
+          overflow: auto;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          backdrop-filter: blur(5px);
+       }
+
+       .file-box:hover {
+          transform: scale(1.02);
+          box-shadow: 0 12px 26px rgba(0, 0, 0, 0.25);
+       }
+
+       h2 {
+          color: #2c1a75;
           margin-bottom: 10px;
-      }
+       }
 
-      pre {
+       pre {
           background: #fff;
-          padding: 20px;
-          border-radius: 10px;
+          padding: 18px;
+          border-radius: 12px;
           border: 1px solid #ccc;
           white-space: pre-wrap;
           word-wrap: break-word;
-          max-height: 400px;
-          overflow-y: auto;
+          overflow-x: auto;
           font-size: 16px;
           line-height: 1.6;
-      }
+          font-family: 'Courier New', monospace;
+          max-height: 400px;
+          overflow-y: scroll;
+       }
 
-      .error-box {
-          background: #ffe6e6;
+       .error-box {
+          background: #fbe6ff;
           padding: 15px;
-          border-left: 5px solid #ff4d4d;
+          border-left: 5px solid #cc80af;
           margin-bottom: 20px;
           border-radius: 10px;
           width: 90%;
           max-width: 900px;
-      }
+       }
 
-      a {
+       .btn {
           display: inline-block;
-          margin-top: 25px;
-          padding: 10px 20px;
-          background: linear-gradient(to right, #ba68c8, #8e24aa);
+          margin-top: 20px;
+          padding: 10px 25px;
+          background: linear-gradient(to right, #6a1b9a, #512da8);
           color: white;
           font-weight: bold;
           text-decoration: none;
           border-radius: 30px;
           transition: transform 0.3s ease, background 0.3s ease;
-      }
+       }
 
-      a:hover {
+       .btn:hover {
           transform: scale(1.05);
-          background: linear-gradient(to right, #ab47bc, #6a1b9a);
-      }
+          background: linear-gradient(to right, #8e24aa, #5e35b1);
+       }
+
+       .download-btn {
+    background: linear-gradient(to right, #5f08f5, #d21ae2);
+    font-size: 18px; /* change text size */
+    font-family: 'Times New Roman', serif; /* change font style */
+    font-weight: bold; /* make text bold */
+    padding: 12px 25px; /* adjust padding */
+    margin: 15px auto; /* center the button horizontally */
+    display: block; /* makes margin auto work for centering */
+    width:150px;
+    text-align: center; /* text stays centered */
+    border: none; /* remove default borders */
+    border-radius: 12px; /* rounded corners */
+    box-shadow: 3px 3px 30px rgb(79, 13, 234);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none; /* for anchor links */
+    color: rgb(0, 0, 0); /* button text color */
+}
+
+.download-btn:hover {
+    background: linear-gradient(to right, #c8c223, #87eb0d);
+    transform: scale(1.05); /* slight hover pop effect */
+}
+
+
+       .footer {
+          text-align: center;
+          padding: 20px;
+          color: #0c0c0c;
+          font-size: 14px;
+          width: 100%;
+          background: rgba(255,255,255,0.6);
+          backdrop-filter: blur(4px);
+          border-top: 1px solid #d8cce6;
+       }
+
+       @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-15px); }
+          to { opacity: 1; transform: translateY(0); }
+       }
     </style>
 </head>
 <body>
-    <h1>📄 Uploaded File Contents</h1>
+    <h1>📄 Extracted File Results</h1>
+
     {% if errors %}
     <div class="error-box">
         <strong>Errors:</strong>
@@ -129,25 +166,20 @@
         </ul>
     </div>
     {% endif %}
+
     {% for file in file_contents %}
     <div class="file-box">
         <h2>🚀 {{ file.filename }}</h2>
         <p><strong>Uploaded at:</strong> {{ file.timestamp }}</p>
         <pre>{{ file.content }}</pre>
+        <a class="download-btn" href="{{ url_for('download_text', filename=file.filename) }}">⬇️ Download Text</a>
     </div>
     {% endfor %}
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
 
-    <a href="/">⬅️ Upload More Files</a>
-    <a href="/history" class="btn-history">View History</a>
+    <a href="/" class="btn">⬅️ Back to Upload</a>
 
+    <!-- <footer class="footer"> -->
+        © 2025 SmartDoc Automator | Designed by <strong>Yash Havalannache ❤️</strong>
+    <!-- </footer> -->
 </body>
 </html>
