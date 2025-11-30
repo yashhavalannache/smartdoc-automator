@@ -151,6 +151,36 @@
           from { opacity: 0; transform: translateY(-15px); }
           to { opacity: 1; transform: translateY(0); }
        }
+       /* Mobile Responsiveness */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px; /* Slightly smaller text for mobile */
+    padding: 10px;
+  }
+
+  form, .header-box, .file-box {
+    width: 95%; /* Fit smaller screens */
+    padding: 15px;
+  }
+
+  h1 { font-size: 28px; }
+  .tagline { font-size: 16px; }
+  button[type="submit"], .download-btn, .btn {
+    width: 100%; /* Make buttons full width */
+    font-size: 16px;
+    padding: 10px 15px;
+  }
+
+  pre {
+    font-size: 14px;
+    max-height: 300px; /* Smaller scrolling box */
+  }
+
+  ul, li {
+    font-size: 14px;
+  }
+}
+
     </style>
 </head>
 <body>
